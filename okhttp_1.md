@@ -1,5 +1,9 @@
-# okhttp 源码分析 （综述）
+# okhttp 学习笔记（综述）
 关于okhttp是一款优秀的网络请求框架，关于它的源码分析文章有很多，这里分享我在学习过程中读到的感觉比较好的文章可以做参考，本系列的文章是在学习okhttp源码过程中的笔记，记录一是为了总结知识，二是为了分享学习过程，其中有错误和欠缺之处，还请不吝批评指正。
+
+1. [拆轮子系列：拆 OkHttp](https://blog.piasy.com/2016/07/11/Understand-OkHttp/)
+2. [带你学开源项目：OkHttp--自己动手实现okhttp](http://wingjay.com/2016/07/21/%E5%B8%A6%E4%BD%A0%E5%AD%A6%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%9AOkHttp-%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E5%AE%9E%E7%8E%B0okhttp/)
+3. [OkHttp3源码分析](http://www.jianshu.com/p/aad5aacd79bf)
 
 okhttp是一个网络请求框架，不仅仅可以用于Android应用中。在okhttp之前，Android中有不少的优秀网络请求框架，比如HttpClient，Volley等，而okhttp虽然与这些框架完成相同的事情，但是与之存在本质的不同，前者都是对Java中的UrlConnection进行封装，而okhttp则是直接对socket进行封装，也就是说他们所处的层次不同。除此以外，okhttp在各种功能属性和性能方面都有很大的优势，关于这些可以参考以上几篇文章，这里直接进入正题介绍okhttp的实现。
 
