@@ -1,6 +1,6 @@
-本篇文章为okhttp源码学习笔记系列的第二篇文章，本篇文章的主要内容为okhttp中的连接与流的管理，因此需要重点介绍的就连接和流两个概念。客户端通过HTTP协议与服务器进行通信，首先需要建立连接，okhttp并没有使用URLConnection， 而是对socket直接进行封装，在socket之上建立了connection的概念，代表这物理连接。同时，一对请求与响应对应着输出和输入流， okhttp中同样使用流的逻辑概念，建立在connection的物理连接之上进行数据通信，（只不过不知道为什么okhttp中流的类名为HttpCodec）。在HTTP1.1以及之前的协议中，一个连接只能同时支持单个流，而SPDY和HTTP2.0协议则可以同时支持多个流，本文先考虑HTTP1.1协议的情况。connection负责与远程服务器建立连接， HttpCodec负责请求的写入与响应的读出，但是除此之外还存在在一个连接上建立新的流，取消一个请求对应的流，释放完成任务的流等操作，为了使HttpCodec不至于过于复杂，okhttp中引入了StreamAllocation负责管理一个连接上的流，同时在connection中也通过一个StreamAllocation的引用的列表来管理一个连接的流，从而使得连接与流之间解耦。另外，熟悉HTTP协议的同学肯定知道建立连接是昂贵的，因此在请求任务完成以后（即流结束以后）不会立即关闭连接，使得连接可以复用，okhttp中通过ConnecitonPool来完成连接的管理和复用。
+本篇文章为okhttp源码学习笔记系列的第二篇文章，本篇文章的主要内容为okhttp中的连接与连接的管理，因此需要重点介绍连接的概念。客户端通过HTTP协议与服务器进行通信，首先需要建立连接，okhttp并没有使用URLConnection， 而是对socket直接进行封装，在socket之上建立了connection的概念，代表这物理连接。同时，一对请求与响应对应着输出和输入流， okhttp中同样使用流的逻辑概念，建立在connection的物理连接之上进行数据通信，（只不过不知道为什么okhttp中流的类名为HttpCodec）。在HTTP1.1以及之前的协议中，一个连接只能同时支持单个流，而SPDY和HTTP2.0协议则可以同时支持多个流，本文先考虑HTTP1.1协议的情况。connection负责与远程服务器建立连接， HttpCodec负责请求的写入与响应的读出，但是除此之外还存在在一个连接上建立新的流，取消一个请求对应的流，释放完成任务的流等操作，为了使HttpCodec不至于过于复杂，okhttp中引入了StreamAllocation负责管理一个连接上的流，同时在connection中也通过一个StreamAllocation的引用的列表来管理一个连接的流，从而使得连接与流之间解耦。另外，熟悉HTTP协议的同学肯定知道建立连接是昂贵的，因此在请求任务完成以后（即流结束以后）不会立即关闭连接，使得连接可以复用，okhttp中通过ConnecitonPool来完成连接的管理和复用。
 
-因此本文会首先介绍StreamAllocation类，并说明连接与流的概念，以及管理机制，其次会依次介绍Connection和HttpCodec1(HttpCodec的一个实现类，代表HTTP1.1协议)，然后再通过分析ConnectionPool来分析连接的管理机制，最后会继续学习第一篇文章中最后介绍的整个网络请求流程（其实就是一系列的拦截器的调用），本文会介绍其中与连接和流有关的三个拦截器，分别时RetryInterceptor, ConnectionInterceptor和CallServerInterceptor。当然期间还有涉及Rout, RoutSelector等一些为建立连接或建立流有关的辅助类。
+因此本文会首先从两个拦截器开始引入StreamAllocation的概念，其次会依次介绍Connection和的一个实现类Connection，最后再通过分析ConnectionPool来分析连接的管理机制，期间还有涉及Rout, RoutSelector等一些为建立连接或建立流有关的辅助类。
 
 ## 1. 从两个拦截器开始
 在上一篇文章中我们了解到okhttp中的网络请求过程其实就是一系列拦截器的处理过程，那么我们就可以以这些拦截器为主线看一下okhttp的实现中都做了哪些事情，首先我们再次贴出RealCall#getResponseWithInterceptor方法：
@@ -554,3 +554,157 @@ ConnectionPool的主要方法就是这三个，其余的则是工具私有方法
 ## 后记
 
 关于okhttp的连接和连接管理，逻辑还是比较容易理解，但是StreamAllocation的概念在刚接触时还是比较令人费解，但是为了逻辑顺序本篇文章还是从StreamAllocation开始分析，进而引入了连接和连接复用管理部分，读者可在理解了连接和连接复用管理部分的代码以后在回头再去读StreamAllocation的代码或许更容易理解一些。在最初的计划中是将连接与流一起分析，正是因为StreamAlloc
+
+## 附录
+在前面的分析中，我们了解到Connection需要一个Route路径对象来建立连接，在这一部分我们主要分析Route和RouteSelector，来学习okhttp中是如何通过Address对象选择合理的路径对象的，本部分可能比较鸡肋，对整个网络请求的流程并没有太大影响，因此有兴趣的同学可以继续阅读，没有兴趣可以略过，并不影响其他部分的分析。
+
+首先我们先来看一下Address类，这个类用来表示需要连接远程主机的地址，它内部包含url, proxy, dns等信息，还有一些关于Https会用到的验证信息，这里我们不再分析其源码， 代码很简单，只是封装了一些属性域而已。但是它的注释还是可以了解一下，可以更好地把握这个类的作用：
+
+```
+/**
+ * A specification for a connection to an origin server. For simple connections, this is the
+ * server's hostname and port. If an explicit proxy is requested (or {@linkplain Proxy#NO_PROXY no
+ * proxy} is explicitly requested), this also includes that proxy information. For secure
+ * connections the address also includes the SSL socket factory, hostname verifier, and certificate
+ * pinner.
+ *
+ * <p>HTTP requests that share the same {@code Address} may also share the same {@link Connection}.
+ */
+```
+通过阅读类的注释，我们就可以发现，其实它就是对于连接对应的远程连接的地址说明，一般情况下会是主机名和端口号，也就是url, 在有代理的情况下还会包含代理信息，而对于Https会包含一些其他的验证信息等。
+
+下面我们再来看Route对象，我们还是来看它的注释：
+```
+/**
+ * The concrete route used by a connection to reach an abstract origin server. When creating a
+ * connection the client has many options:
+ *
+ * <ul>
+ *     <li><strong>HTTP proxy:</strong> a proxy server may be explicitly configured for the client.
+ *         Otherwise the {@linkplain java.net.ProxySelector proxy selector} is used. It may return
+ *         multiple proxies to attempt.
+ *     <li><strong>IP address:</strong> whether connecting directly to an origin server or a proxy,
+ *         opening a socket requires an IP address. The DNS server may return multiple IP addresses
+ *         to attempt.
+ * </ul>
+ *
+ * <p>Each route is a specific selection of these options.
+ */
+```
+从注释中我们可以看出，首先Route对象可以用于建立连接，而选择一个合适的Route，有很多种选项，第一个就是Proxy代理，代理可以明确指定，也可以由ProxySelector中返回多个可用的代理，第二个选项就是IP地址，在Java中表示就是InetAddress对象，dns会返回一个服务器对应的多个IP地址，这两个选项在RouteSelector中马上就会看到，下面我们来分析RouteSelector是如何选择Route对象的。
+
+首先来看它的属性域：
+```
+/**
+ * Selects routes to connect to an origin server. Each connection requires a choice of proxy server,
+ * IP address, and TLS mode. Connections may also be recycled.
+ */
+public final class RouteSelector {
+  private final Address address;
+  private final RouteDatabase routeDatabase;
+
+  /* The most recently attempted route. */
+  private Proxy lastProxy;
+  private InetSocketAddress lastInetSocketAddress;
+
+  /* State for negotiating the next proxy to use. */
+  private List<Proxy> proxies = Collections.emptyList();
+  private int nextProxyIndex;
+
+  /* State for negotiating the next socket address to use. */
+  private List<InetSocketAddress> inetSocketAddresses = Collections.emptyList();
+  private int nextInetSocketAddressIndex;
+
+  /* State for negotiating failed routes */
+  private final List<Route> postponedRoutes = new ArrayList<>();
+  ...
+}
+注释说的也很清楚，连接远程服务器，每一个连接都需要选择一个代理和IP地址，这里我们忽略与HTTPs有关的东西，下面的属性域也就很容易理解，address代表地址， routeDatabase是一个黑名单，存储那些不可用的Route对象，接下来的六个属性则是与Proxy和InetSocketAddress相关了，包括最近使用的，可以选择的，以及下一个可选择的索引值，最后postponedRoutes表示那些加入到黑名单中的且符合地址条件（即满足条件但是之前有过不可用记录的Route对象）所有Route对象集合，当没有可选择余地时会选择使用它们，总比没有要好。
+
+首先我们从构造器开始：
+```
+  public RouteSelector(Address address, RouteDatabase routeDatabase) {
+    this.address = address;
+    this.routeDatabase = routeDatabase;
+
+    resetNextProxy(address.url(), address.proxy());
+  }
+```
+这里我们看到调用了resetNextProxy()方法，其实可以将其理解为一个初始化或者重置Proxy方法，我们来看起代码：
+```
+/** Prepares the proxy servers to try. */
+  private void resetNextProxy(HttpUrl url, Proxy proxy) {
+    if (proxy != null) {
+      // If the user specifies a proxy, try that and only that.
+      proxies = Collections.singletonList(proxy);
+    } else {
+      // Try each of the ProxySelector choices until one connection succeeds.
+      List<Proxy> proxiesOrNull = address.proxySelector().select(url.uri());
+      proxies = proxiesOrNull != null && !proxiesOrNull.isEmpty()
+          ? Util.immutableList(proxiesOrNull)
+          : Util.immutableList(Proxy.NO_PROXY);
+    }
+    nextProxyIndex = 0;
+  }
+```
+逻辑流程也容易理解，优先使用在address对象中的指定的proxy对象，该方法由构造器调用，传递进来的，如果该Proxy对象为空，则从address.proxySelector中选择一个Proxy， 如果还没有则使用Proxy.NO_PROXY，并将索引初始化为0，接下来我们一并看一下resetInetSocketAddress()方法：
+```
+  /** Prepares the socket addresses to attempt for the current proxy or host. */
+  private void resetNextInetSocketAddress(Proxy proxy) throws IOException {
+    // Clear the addresses. Necessary if getAllByName() below throws!
+    inetSocketAddresses = new ArrayList<>();
+
+    String socketHost;
+    int socketPort;
+    if (proxy.type() == Proxy.Type.DIRECT || proxy.type() == Proxy.Type.SOCKS) {
+      socketHost = address.url().host();
+      socketPort = address.url().port();
+    } else {
+      SocketAddress proxyAddress = proxy.address();
+      ...
+      InetSocketAddress proxySocketAddress = (InetSocketAddress) proxyAddress;
+      socketHost = getHostString(proxySocketAddress);
+      socketPort = proxySocketAddress.getPort();
+    }
+    ...
+    if (proxy.type() == Proxy.Type.SOCKS) {
+      inetSocketAddresses.add(InetSocketAddress.createUnresolved(socketHost, socketPort));
+    } else {
+      // Try each address for best behavior in mixed IPv4/IPv6 environments.
+      List<InetAddress> addresses = address.dns().lookup(socketHost);
+      for (int i = 0, size = addresses.size(); i < size; i++) {
+        InetAddress inetAddress = addresses.get(i);
+        inetSocketAddresses.add(new InetSocketAddress(inetAddress, socketPort));
+      }
+    }
+
+    nextInetSocketAddressIndex = 0;
+  }
+```
+这里省略了部分条件判断，逻辑流程同意很清楚，首先是获取到主机地址和端口号，然后创建InetSocketAddress或者通过address中的dns查询所有有可能的InetSocketAddress地址。在有了以上的了解以后我们就可以看RouteSelector中最重要的方法，即选择一个Route对象，next()方法：
+```
+  public Route next() throws IOException {
+    // Compute the next route to attempt.
+    if (!hasNextInetSocketAddress()) {
+      if (!hasNextProxy()) {
+        if (!hasNextPostponed()) {
+          throw new NoSuchElementException();
+        }
+        return nextPostponed();
+      }
+      lastProxy = nextProxy();
+    }
+    lastInetSocketAddress = nextInetSocketAddress();
+
+    Route route = new Route(address, lastProxy, lastInetSocketAddress);
+    if (routeDatabase.shouldPostpone(route)) {
+      postponedRoutes.add(route);
+      // We will only recurse in order to skip previously failed routes. They will be tried last.
+      return next();
+    }
+
+    return route;
+  }
+```
+这段代码第一次看可能有些迷惑，不过仔细去分析其实逻辑很清晰，首先我们假定还有可用的InetSocketAddress，那么通过nextInetSocketAddress()直接获取并创建Route对象，然后检查是否在黑名单中，在黑名单则加入候选队列，其实就是最后迫于无奈才会使用。如果没有了InetSocketAddress，则选择下一个可用的代理Proxy，在nextProxy中会调用resetNextInetSocketAddress()方法重置InetSocketAddress的队列，继续查询下个可用的InetSocketAddress对象，如果没有可用的Proxy，则从候选队列中postpone中选择，即迫于无奈的选择，如果候选队列也为空那就无能为力了，只能抛异常。这样就分析完了整个选择路径的过程，过程的逻辑很清晰也很容易理解，另外该类中还有一些其他的方法，如用于更新黑名单等，有兴趣的可以自行查阅。
+分析到这里，整个连接的过程就分析结束了，可以总结为在网络请求过程中，首先创建一个StreamAllocation的对象，然后调用其newStream()方法，查找一个可用连接，要么复用连接，要么新建连接，复用连接则根据address从连接池中查找，新建连接则是根据address查找一个Route对象建立连接，建立连接以后会将该连接添加到连接池中，同时连接池的清理任务停止的情况下，添加新的连接进去会触发开启清理任务。这是建立连接和管理连接的整个过程，当拥有连接以后，StreamAllocation就会在连接上建立一个流对象，该流持有connection的输入输出流，也就是socket的输入输出流，通过它们最终完成数据通信的过程，所以下一节中将会重点分析流对象Http1Codec，以及数据通信的过程。
