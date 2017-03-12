@@ -619,6 +619,7 @@ public final class RouteSelector {
   private final List<Route> postponedRoutes = new ArrayList<>();
   ...
 }
+```
 注释说的也很清楚，连接远程服务器，每一个连接都需要选择一个代理和IP地址，这里我们忽略与HTTPs有关的东西，下面的属性域也就很容易理解，address代表地址， routeDatabase是一个黑名单，存储那些不可用的Route对象，接下来的六个属性则是与Proxy和InetSocketAddress相关了，包括最近使用的，可以选择的，以及下一个可选择的索引值，最后postponedRoutes表示那些加入到黑名单中的且符合地址条件（即满足条件但是之前有过不可用记录的Route对象）所有Route对象集合，当没有可选择余地时会选择使用它们，总比没有要好。
 
 首先我们从构造器开始：
@@ -631,6 +632,7 @@ public final class RouteSelector {
   }
 ```
 这里我们看到调用了resetNextProxy()方法，其实可以将其理解为一个初始化或者重置Proxy方法，我们来看起代码：
+
 ```
 /** Prepares the proxy servers to try. */
   private void resetNextProxy(HttpUrl url, Proxy proxy) {
@@ -648,6 +650,7 @@ public final class RouteSelector {
   }
 ```
 逻辑流程也容易理解，优先使用在address对象中的指定的proxy对象，该方法由构造器调用，传递进来的，如果该Proxy对象为空，则从address.proxySelector中选择一个Proxy， 如果还没有则使用Proxy.NO_PROXY，并将索引初始化为0，接下来我们一并看一下resetInetSocketAddress()方法：
+
 ```
   /** Prepares the socket addresses to attempt for the current proxy or host. */
   private void resetNextInetSocketAddress(Proxy proxy) throws IOException {
@@ -682,6 +685,7 @@ public final class RouteSelector {
   }
 ```
 这里省略了部分条件判断，逻辑流程同意很清楚，首先是获取到主机地址和端口号，然后创建InetSocketAddress或者通过address中的dns查询所有有可能的InetSocketAddress地址。在有了以上的了解以后我们就可以看RouteSelector中最重要的方法，即选择一个Route对象，next()方法：
+
 ```
   public Route next() throws IOException {
     // Compute the next route to attempt.
@@ -707,4 +711,5 @@ public final class RouteSelector {
   }
 ```
 这段代码第一次看可能有些迷惑，不过仔细去分析其实逻辑很清晰，首先我们假定还有可用的InetSocketAddress，那么通过nextInetSocketAddress()直接获取并创建Route对象，然后检查是否在黑名单中，在黑名单则加入候选队列，其实就是最后迫于无奈才会使用。如果没有了InetSocketAddress，则选择下一个可用的代理Proxy，在nextProxy中会调用resetNextInetSocketAddress()方法重置InetSocketAddress的队列，继续查询下个可用的InetSocketAddress对象，如果没有可用的Proxy，则从候选队列中postpone中选择，即迫于无奈的选择，如果候选队列也为空那就无能为力了，只能抛异常。这样就分析完了整个选择路径的过程，过程的逻辑很清晰也很容易理解，另外该类中还有一些其他的方法，如用于更新黑名单等，有兴趣的可以自行查阅。
+
 分析到这里，整个连接的过程就分析结束了，可以总结为在网络请求过程中，首先创建一个StreamAllocation的对象，然后调用其newStream()方法，查找一个可用连接，要么复用连接，要么新建连接，复用连接则根据address从连接池中查找，新建连接则是根据address查找一个Route对象建立连接，建立连接以后会将该连接添加到连接池中，同时连接池的清理任务停止的情况下，添加新的连接进去会触发开启清理任务。这是建立连接和管理连接的整个过程，当拥有连接以后，StreamAllocation就会在连接上建立一个流对象，该流持有connection的输入输出流，也就是socket的输入输出流，通过它们最终完成数据通信的过程，所以下一节中将会重点分析流对象Http1Codec，以及数据通信的过程。
