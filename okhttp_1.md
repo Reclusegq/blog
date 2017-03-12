@@ -481,6 +481,8 @@ public interface Interceptor {
 ```
 Interceptor只有一个方法，就是接收一个chain, 然后返回响应， 当然从这个chain中我们可以获取请求，对请求可以做处理， 然后调用chain.proceed()方法获取响应，然后再对响应做处理就可以将该响应返回了。而Chain的主要方法时proceed()方法，它可以理解为一个接力传递，为了描述涉及到两个类的递归过程，我们首先来看下面这张图。
 
+![网络请求流程](http://upload-images.jianshu.io/upload_images/1074740-b0211c76a8745bf5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 Chain_1为getResponseWithInterceptorChain方法中构建的Chain对象，我们调用它的proceed()方法即可以将request转换为response， 那么它内部做了什么事情呢，在proceed(request)方法中会封装请求，流，连接等构建Chain_2对象，并将该对象传递给Interceptor_A对象，然后调用Interceptor_A的intercept(Chain Chain_2)方法获取响应， 而在Interceptor_A的intecept()方法中可以获取到Chain_1装在Chian_2中的request对象，对请求做操作，然后调用Chain_2的proceed(request)方法，将它处理完的请求传递进去供应Chain_2构建Chain_3，这样Interceptor_B就可以从Chain_3中获取的请求就是Interceptor_A处理过的请求，与此同时Interceptor_A从Chain_2的proceed(request)方法中获取响应， 至于Chain_B中的操作则与Chain_A相同，依次递归调用。但注意到最后Chain_3会构建一个Chain_4(图中未画出， 它含有的请求应该就是Interceptor_B处理后的请求)， 这样Interceptor_C就可以从Chain_4中获取请求，然后从中获取连接上的流，进而执行对socket的读写操作， 而不会再调用Chain_4的proceed()方法， 返回的响应则会逐级的向前传递。
 这一段可能有些绕，如果看不懂可以先去查看其他文章中 的介绍，不过有些文章中将Chain看做一个链，然后每个拦截器都是从链上获取请求，然后加工以后再将响应放置到上面，逐级的操作，从Chain这个名字上看确实如此，可能这是从更高的抽象角度可以如此看待，不过在看源码的过程中，Chain的proceed()方法中确实是不断地创建新的chain对象并传递到拦截器的intercept()方法中。由于水平有限，只能这么讲，图画的也比较粗糙，下面从源码的角度再去理解这个过程，然后回过头来再来理解这个过程或许会好一些。
 首先来看Chain的唯一实现类RealInterceptorChain的代码。同样地我们来分析它的数据结构，它是在递归的过程中传递请求的，而响应则是在递归方法中则逐级已经返回，所以该类应该有一个Request, Chain的第二个功能时串联各个拦截器，那么它也 应该有一个拦截器的链表，然后分析它的方法应该很简单，我们所能想到的就是proceed(request)方法，在该方法中应该会使用传递进来的请求对象封装新的Chain对象，并调用下一个拦截器的intercept(Chain)方法， 这里说下一个拦截器，那么就需要一个标志位，标识下一个拦截器在拦截器链表中的位置。下面来看代码：
