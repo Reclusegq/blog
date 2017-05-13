@@ -1,5 +1,72 @@
-### HTTPCodec
+# OkHttp 源码学习笔记 数据交换的流 HTTPCodec
 
+在上一篇文章中介绍了okhttp中连接概念以及连接建立和管理，其中在拦截器链中的ConnectInterceptor负责建立连接，并在该连接上建立流，将其放置在拦截器链中，在拦截器链中的最后一个拦截器CallServerInterceptor，通过使用流的操作完成网络请求的数据交换。下面从该拦截器开始学习okhttp时如果通过流的操作完成网络通信的。
+
+## 1. 最后一个拦截器CallServerInterceptor
+CallServerInterceptor是okhttp中的最后一个拦截器，在拦截器链中，拦截器的顺序是用户定义的应用拦截器，RetryAndFollowUpInterceptor, BridgeInterceptor, CacheInterceptor, ConnectInterceptor, 网络拦截器，以及最后的CallServerInterceptor。前面的若干拦截器的作用主要包括两个方面，一是在递归调用链中对Request和返回的Response进行处理，这主要是针对用户自定义的拦截器，完成我们在应用中不同的需求；二是在拦截器链中完成一定功能，为最终的网络请求提供帮助，这主要是针对okhttp中定义的拦截器，比如ConnectInterceptor主要作用就是根据请求建立连接和流对象，从而帮助最终完成网络请求。虽然作用不同，但是这两类拦截器的代码结构都有共同的特点，即基本包括三个步骤，从chain对象中获取request对象以及其他对象，对请求做处理，然后调用chain.proceed()方法获取网络请求response， 最后在第三步中对响应做响应处理并返回处理之后的Response，当然部分拦截器可以没有第一步和第三步，但是基本结构都是一致的。然而，最后的一个拦截器CallServerInterceptor，其结构则与上述拦截器的结构有所不同，它的主要功能就是建立好的流对象，完成数据通信。
+这里首先简单介绍一下流对象，在okhttp中，流对象对应着HttpCodec， 它有对应的两个子类， Http1Codec和Http2Codec， 分别对应Http1.1协议以及Http2.0协议，本文主要学习前者。在Http1Codec中主要包括两个重要的属性，即source和sink，它们分别封装了socket的输入和输出，CallServerInterceptor正是利用HttpCodec提供的I/O操作完成网络通信。下面来看CallServerInterceptor的源码。
+对于拦截器，依然是学习它的intercept方法：
+```
+ @Override 
+ public Response intercept(Chain chain) throws IOException {
+    RealInterceptorChain realChain = (RealInterceptorChain) chain;
+    HttpCodec httpCodec = realChain.httpStream();
+    StreamAllocation streamAllocation = realChain.streamAllocation();
+    RealConnection connection = (RealConnection) realChain.connection();
+    Request request = realChain.request();
+
+    long sentRequestMillis = System.currentTimeMillis();
+    //1. 向socket中写入请求header信息
+    httpCodec.writeRequestHeaders(request);
+
+    Response.Builder responseBuilder = null;
+    if (HttpMethod.permitsRequestBody(request.method()) && request.body() != null) {
+      //a. 省略部分
+      ...
+
+      if (responseBuilder == null) {
+        //2. 向socket中写入请求body信息
+        Sink requestBodyOut = httpCodec.createRequestBody(request, request.body().contentLength());
+        BufferedSink bufferedRequestBody = Okio.buffer(requestBodyOut);
+        request.body().writeTo(bufferedRequestBody);
+        bufferedRequestBody.close();
+      } else if (!connection.isMultiplexed()) {
+        //b.省略部分
+      }
+    }
+    //3. 完成网络请求的写入
+    httpCodec.finishRequest();
+
+    //4. 读取网络响应header信息
+    if (responseBuilder == null) {
+      responseBuilder = httpCodec.readResponseHeaders(false);
+    }
+
+    Response response = responseBuilder
+        .request(request)
+        .handshake(streamAllocation.connection().handshake())
+        .sentRequestAtMillis(sentRequestMillis)
+        .receivedResponseAtMillis(System.currentTimeMillis())
+        .build();
+
+    int code = response.code();
+    if (forWebSocket && code == 101) {
+        //d. 省略部分
+    } else {
+      //5. 读取网络响应的body信息
+      response = response.newBuilder()
+          .body(httpCodec.openResponseBody(response))
+          .build();
+    }
+    // d. 省略部分 
+    return response;
+  }
+```
+本文对代码做部分的省略，突出主要的流程，省略已经做了a, b, c, b的标注，后面再分别对其学习分析，然后是最主要的流程做了注释，主要是分成5步，在执行网络请求之前，首先时从拦截器链中获取连接，流以及它们二者的管理者streamAllocation，还有原始的网络请求request，然后执行以下五个步骤
+ - 1  向socket中写入请求header信息
+ - 2  向socket中写入请求body信息
+ - 3  完成网络请求的写入
+ - 4 
 在okttp3中，将流定义成HttpCodec， 也没有去查为什么叫这个名字，有知道的同学欢迎在评论中告知，不胜感激。还是同样的原因，我们只考虑Http1.1及以下版本，我们只需要考虑Http1Codec代码。对于Http1Codec的学习，我们还是很有必要先看一下它的类注释，描述的很清楚
 ```
 /**
