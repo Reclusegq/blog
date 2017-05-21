@@ -1,0 +1,1525 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body {
+  width: 45em;
+  border: 1px solid #ddd;
+  outline: 1300px solid #fff;
+  margin: 16px auto;
+}
+
+body .markdown-body
+{
+  padding: 30px;
+}
+
+@font-face {
+  font-family: fontawesome-mini;
+  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAzUABAAAAAAFNgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAABbAAAABwAAAAcZMzaOEdERUYAAAGIAAAAHQAAACAAOQAET1MvMgAAAagAAAA+AAAAYHqhde9jbWFwAAAB6AAAAFIAAAFa4azkLWN2dCAAAAI8AAAAKAAAACgFgwioZnBnbQAAAmQAAAGxAAACZVO0L6dnYXNwAAAEGAAAAAgAAAAIAAAAEGdseWYAAAQgAAAFDgAACMz7eroHaGVhZAAACTAAAAAwAAAANgWEOEloaGVhAAAJYAAAAB0AAAAkDGEGa2htdHgAAAmAAAAAEwAAADBEgAAQbG9jYQAACZQAAAAaAAAAGgsICJBtYXhwAAAJsAAAACAAAAAgASgBD25hbWUAAAnQAAACZwAABOD4no+3cG9zdAAADDgAAABsAAAAmF+yXM9wcmVwAAAMpAAAAC4AAAAusPIrFAAAAAEAAAAAyYlvMQAAAADLVHQgAAAAAM/u9uZ4nGNgZGBg4ANiCQYQYGJgBEJuIGYB8xgABMMAPgAAAHicY2Bm42OcwMDKwMLSw2LMwMDQBqGZihmiwHycoKCyqJjB4YPDh4NsDP+BfNb3DIuAFCOSEgUGRgAKDgt4AAB4nGNgYGBmgGAZBkYGEAgB8hjBfBYGCyDNxcDBwMTA9MHhQ9SHrA8H//9nYACyQyFs/sP86/kX8HtB9UIBIxsDXICRCUgwMaACRoZhDwA3fxKSAAAAAAHyAHABJQB/AIEAdAFGAOsBIwC/ALgAxACGAGYAugBNACcA/wCIeJxdUbtOW0EQ3Q0PA4HE2CA52hSzmZDGe6EFCcTVjWJkO4XlCGk3cpGLcQEfQIFEDdqvGaChpEibBiEXSHxCPiESM2uIojQ7O7NzzpkzS8qRqnfpa89T5ySQwt0GzTb9Tki1swD3pOvrjYy0gwdabGb0ynX7/gsGm9GUO2oA5T1vKQ8ZTTuBWrSn/tH8Cob7/B/zOxi0NNP01DoJ6SEE5ptxS4PvGc26yw/6gtXhYjAwpJim4i4/plL+tzTnasuwtZHRvIMzEfnJNEBTa20Emv7UIdXzcRRLkMumsTaYmLL+JBPBhcl0VVO1zPjawV2ys+hggyrNgQfYw1Z5DB4ODyYU0rckyiwNEfZiq8QIEZMcCjnl3Mn+pED5SBLGvElKO+OGtQbGkdfAoDZPs/88m01tbx3C+FkcwXe/GUs6+MiG2hgRYjtiKYAJREJGVfmGGs+9LAbkUvvPQJSA5fGPf50ItO7YRDyXtXUOMVYIen7b3PLLirtWuc6LQndvqmqo0inN+17OvscDnh4Lw0FjwZvP+/5Kgfo8LK40aA4EQ3o3ev+iteqIq7wXPrIn07+xWgAAAAABAAH//wAPeJyFlctvG1UUh+/12DPN1B7P3JnYjj2Ox4/MuDHxJH5N3UdaEUQLqBIkfQQioJWQ6AMEQkIqsPGCPwA1otuWSmTBhjtps2ADWbJg3EpIXbGouqSbCraJw7kzNo2dRN1cnXN1ZvT7zuuiMEI7ncizyA0URofRBJpCdbQuIFShYY+GZRrxMDVtih5TwQPHtXDFFSIKoWIbuREBjLH27Ny4MsbVx+uOJThavebgVrNRLAiYx06rXsvhxLgWx9xpfHdrs/ekc2Pl2cpPCVEITQpwbj8VQhfXSq2m+Wxqaq2D73Kne5e3NjHqQNj3CRYlJlgUl/jRNP+2Gs2pNYRQiOnmUaQDqm30KqKiTTWPWjboxnTWpvgxjXo0KrtZXAHt7hwIz0YVcj88JnKlJKi3NPAwLyDwZudSmJSMMJFDYaOkaol6XtESx3Gt1VTytdZJ3DCLeaVhVnCBH1fycHTxFXwPX+l2e3d6H/TufGGmMTLTnbSJUdo00zuBswMO/nl3YLeL/wnu9/limCuD3vC54h5NBVz6Li414AI8Vx3iiosKcQXUbrvhFFiYb++HN4DaF4XzFW0fIN4XDWJ3a3XQoq9V8WiyRmdsatV9xUcHims1JloH0YUa090G3Tro3mC6c01f+YwCPquINr1PTaCP6rVTOOmf0GE2dBc7zWIhji3/5MchSuBHgDbU99RMWt3YUNMZMJmx92YP6NsHx/5/M1yvInpnkIOM3Z8fA3JQ2lW1RFC1KaBPDFXNAHYYvGy73aYZZZ3HifbeuiVZCpwA3oQBs0wGPYJbJfg60xrKEbKiNtTe1adwrpBRwlAuQ3q3VRaX0QmQ9a49BTSCuF1MLfQ6+tinOubRBZuWPNoMevGMT+V41KitO1is3D/tpMcq1JHZqDHGs8DoYGDkxJgKjHROeTCmhZvzPm9pod+ltKm4PN7Dyvvldlpsg8D+4AUJZ3F/JBstZz7cbFRxsaAGV6yX/dkcycWf8eS3QlQea+YLjdm3yrOnrhFpUyKVvFE4lpv4bO3Svx/6F/4xmiDu/RT5iI++lko18mY1oX+5UGKR6kmVjM/Zb76yfHtxy+h/SyQ0lLdpdKy/lWB6szatetQJ8nZ80A2Qt6ift6gJeavU3BO4gtxs/KCtNPVibCtYCWY3SIlSBPKXZALXiIR9oZeJ1AuMyxLpHIy/yO7vSiSE+kZvk0ihJ30HgHfzZtEMmvV58x6dtqns0XTAW7Vdm4HJ04OCp/crOO7rd9SGxQAE/mVA9xRN+kVSMRFF6S9JFGUtthkjBA5tFCWc2l4V43Ex9GmUP3SI37Jjmir9KqlaDJ4S4JB3vuM/jzyH1+8MuoZ+QGzfnvPoJb96cZlWjMcKLfgDwB7E634JTY+asjsPzS5CiVnEWY+KsrsIN5rn3mAPjqmQBxGjcGKB9f9ZxY3mYC2L85CJ2FXIxKKyHk+dg0FHbuEc7D5NzWUX32WxFcWNGRAbvwSx0RmIXVDuYySafluQBmzA/ssqJAMLnli+WIC90Gw4lm85wcp0qjArEDPJJV/sSx4P9ungTpgMw5gVC1XO4uULq0s3v1rqLi0vX/z65vlH50f8T/RHmSPTk5xxWBWOluMT6WiOy+tdvWxlV/XQb3o3c6Ssr+r6I708GsX9/nzp1tKFh0s3v7m4vAy/Hnb/KMOvc1wump6Il48K6mGDy02X9Yd65pa+nQIjk76lWxCkG8NBCP0HQS9IpAAAeJxjYGRgYGBhcCrq214Qz2/zlUGenQEEzr/77oug/zewFbB+AHI5GJhAogBwKQ0qeJxjYGRgYH3/P46BgZ0BBNgKGBgZUAEPAE/7At0AAAB4nGNngAB2IGYjhBsYBAAIYADVAAAAAAAAAAAAAFwAyAEeAaACCgKmAx4DggRmAAAAAQAAAAwAagAEAAAAAAACAAEAAgAWAAABAAChAAAAAHiclZI7bxQxFIWPd/JkUYQChEhIyAVKgdBMskm1QkKrRETpQiLRUczueB/K7HhlOxttg8LvoKPgP9DxFxANDR0tHRWi4NjrPIBEgh1p/dm+vufcawNYFWsQmP6e4jSyQB2fI9cwj++RE9wTjyPP4LYoI89iWbyLPIe6+Bh5Hs9rryMv4GbtW+RF3EhuRa7jbrIbeQkPkjdUETOLnL0Kip4FVvAhco1RXyMnSPEz8gzWxE7kWTwUp5HnsCLeR57HW/El8gJWa58iL+JO7UfkOh4l9yMv4UnyEtvQGGECgwF66MNBooF1bGCL1ELB/TYU+ZBRlvsKQ44Se6jQ4a7hef+fh72Crv25kp+8lNWGmeKoOI5jJLb1aGIGvb6TjfWNLdkqdFvJw4l1amjlXtXRZqRN7lSRylZZyhBqpVFWmTEXgWfUrpi/hZOQXdOd4rKuXOtEWT3k5IArPRzTUU5tHKjecZkTpnVbNOnt6jzN8240GD4xtikvZW56043rPMg/dS+dlOceXoR+WPbJ55Dsekq1lJpnypsMUsYOdCW30o103Ytu/lvh+5RWFLfBjm9/N8hJntPhvx92rnoE/kyHdGasGy754kw36vsVf/lFeBi+0COu+cfgQr42G3CRpeLoZ53gmfe3X6rcKt5oVxnptHR9JS8ehVUd5wvvahN2uqxOOpMXapibI5k7Zwbt4xBSaTfoKBufhAnO/uqNcfK8OTs0OQ6l7JIqFjDhYj5WcjevCnI/1DDiI8j4ndWb/5YzDZWh79yomWXeXj7Nnw70/2TIeFPTrlSh89k1ObOSRVZWZfgF0r/zJQB4nG2JUQuCQBCEd07TTg36fb2IyBaLd3vWaUh/vmSJnvpgmG8YcmS8X3Shf3R7QA4OBUocUKHGER5NNbOOEvwc1txnuWkTRb/aPjimJ5vXabI+3VfOiyS15UWvyezM2xiGOPyuMohOH8O8JiO4Af+FsAGNAEuwCFBYsQEBjlmxRgYrWCGwEFlLsBRSWCGwgFkdsAYrXFhZsBQrAAA=) format('woff');
+}
+
+@font-face {
+  font-family: octicons-anchor;
+  src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+
+.markdown-body {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #333333;
+  overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.markdown-body a {
+  background: transparent;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline: 0;
+}
+
+.markdown-body b,
+.markdown-body strong {
+  font-weight: bold;
+}
+
+.markdown-body mark {
+  background: #ff0;
+  color: #000;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body sub,
+.markdown-body sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.markdown-body sup {
+  top: -0.5em;
+}
+.markdown-body sub {
+  bottom: -0.25em;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.markdown-body img {
+  border: 0;
+}
+
+.markdown-body hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+.markdown-body pre {
+  overflow: auto;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+.markdown-body input {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body html input[disabled] {
+  cursor: default;
+}
+
+.markdown-body input {
+  line-height: normal;
+}
+
+.markdown-body input[type="checkbox"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body .codehilitetable {
+  border: 0;
+  border-spacing: 0;
+}
+
+.markdown-body .codehilitetable tr {
+  border: 0;
+}
+
+.markdown-body .codehilitetable pre,
+.markdown-body .codehilitetable div.codehilite {
+  margin: 0;
+}
+
+.markdown-body .linenos,
+.markdown-body .code,
+.markdown-body .codehilitetable td {
+  border: 0;
+  padding: 0;
+}
+
+.markdown-body td:not(.linenos) .linenodiv {
+  padding: 0 !important;
+}
+
+.markdown-body .code {
+  width: 100%;
+}
+
+.markdown-body .linenos div pre,
+.markdown-body .linenodiv pre,
+.markdown-body .linenodiv {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.markdown-body .code div pre,
+.markdown-body .code div {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.markdown-body * {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font: 13px Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.4;
+}
+
+.markdown-body a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+.markdown-body a:hover,
+.markdown-body a:focus,
+.markdown-body a:active {
+  text-decoration: underline;
+}
+
+.markdown-body hr {
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-body hr:before,
+.markdown-body hr:after {
+  display: table;
+  content: " ";
+}
+
+.markdown-body hr:after {
+  clear: both;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.markdown-body h1 {
+  font-size: 30px;
+}
+
+.markdown-body h2 {
+  font-size: 21px;
+}
+
+.markdown-body h3 {
+  font-size: 16px;
+}
+
+.markdown-body h4 {
+  font-size: 14px;
+}
+
+.markdown-body h5 {
+  font-size: 12px;
+}
+
+.markdown-body h6 {
+  font-size: 11px;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ul ul ol,
+.markdown-body ul ol ol,
+.markdown-body ol ul ol,
+.markdown-body ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body kbd {
+  background-color: #e7e7e7;
+  background-image: -moz-linear-gradient(#fefefe, #e7e7e7);
+  background-image: -webkit-linear-gradient(#fefefe, #e7e7e7);
+  background-image: linear-gradient(#fefefe, #e7e7e7);
+  background-repeat: repeat-x;
+  border-radius: 2px;
+  border: 1px solid #cfcfcf;
+  color: #000;
+  padding: 3px 5px;
+  line-height: 10px;
+  font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  display: inline-block;
+}
+
+.markdown-body>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.markdown-body .headeranchor-link {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding-right: 6px;
+  padding-left: 30px;
+  margin-left: -30px;
+}
+
+.markdown-body .headeranchor-link:focus {
+  outline: none;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  position: relative;
+  margin-top: 1em;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.markdown-body h1 .headeranchor,
+.markdown-body h2 .headeranchor,
+.markdown-body h3 .headeranchor,
+.markdown-body h4 .headeranchor,
+.markdown-body h5 .headeranchor,
+.markdown-body h6 .headeranchor {
+  display: none;
+  color: #000;
+  vertical-align: middle;
+}
+
+.markdown-body h1:hover .headeranchor-link,
+.markdown-body h2:hover .headeranchor-link,
+.markdown-body h3:hover .headeranchor-link,
+.markdown-body h4:hover .headeranchor-link,
+.markdown-body h5:hover .headeranchor-link,
+.markdown-body h6:hover .headeranchor-link {
+  height: 1em;
+  padding-left: 8px;
+  margin-left: -30px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.markdown-body h1:hover .headeranchor-link .headeranchor,
+.markdown-body h2:hover .headeranchor-link .headeranchor,
+.markdown-body h3:hover .headeranchor-link .headeranchor,
+.markdown-body h4:hover .headeranchor-link .headeranchor,
+.markdown-body h5:hover .headeranchor-link .headeranchor,
+.markdown-body h6:hover .headeranchor-link .headeranchor {
+  display: inline-block;
+}
+
+.markdown-body h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+
+.markdown-body h4 {
+  font-size: 1.25em;
+}
+
+.markdown-body h5 {
+  font-size: 1em;
+}
+
+.markdown-body h6 {
+  font-size: 1em;
+  color: #777;
+}
+
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre,
+.markdown-body .admonition {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body hr {
+  height: 4px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #e7e7e7;
+  border: 0 none;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+}
+
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.markdown-body blockquote {
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+
+.markdown-body table th {
+  font-weight: bold;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+
+.markdown-body table tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body code,
+.markdown-body samp {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 3px;
+}
+
+.markdown-body code:before,
+.markdown-body code:after {
+  letter-spacing: -0.2em;
+  content: "\00a0";
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .codehilite {
+  margin-bottom: 16px;
+}
+
+.markdown-body .codehilite pre,
+.markdown-body pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+}
+
+.markdown-body .codehilite pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: initial;
+  padding: 0;
+  margin: 0;
+  overflow: initial;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+.markdown-body pre code:before,
+.markdown-body pre code:after {
+  content: normal;
+}
+
+/* Admonition */
+.markdown-body .admonition {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  position: relative;
+  border-radius: 3px;
+  border: 1px solid #e0e0e0;
+  border-left: 6px solid #333;
+  padding: 10px 10px 10px 30px;
+}
+
+.markdown-body .admonition table {
+  color: #333;
+}
+
+.markdown-body .admonition p {
+  padding: 0;
+}
+
+.markdown-body .admonition-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.markdown-body .admonition>.admonition-title {
+  color: #333;
+}
+
+.markdown-body .attention>.admonition-title {
+  color: #a6d796;
+}
+
+.markdown-body .caution>.admonition-title {
+  color: #d7a796;
+}
+
+.markdown-body .hint>.admonition-title {
+  color: #96c6d7;
+}
+
+.markdown-body .danger>.admonition-title {
+  color: #c25f77;
+}
+
+.markdown-body .question>.admonition-title {
+  color: #96a6d7;
+}
+
+.markdown-body .note>.admonition-title {
+  color: #d7c896;
+}
+
+.markdown-body .admonition:before,
+.markdown-body .attention:before,
+.markdown-body .caution:before,
+.markdown-body .hint:before,
+.markdown-body .danger:before,
+.markdown-body .question:before,
+.markdown-body .note:before {
+  font: normal normal 16px fontawesome-mini;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  line-height: 1.5;
+  color: #333;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.markdown-body .admonition:before {
+  content: "\f056\00a0";
+  color: 333;
+}
+
+.markdown-body .attention:before {
+  content: "\f058\00a0";
+  color: #a6d796;
+}
+
+.markdown-body .caution:before {
+  content: "\f06a\00a0";
+  color: #d7a796;
+}
+
+.markdown-body .hint:before {
+  content: "\f05a\00a0";
+  color: #96c6d7;
+}
+
+.markdown-body .danger:before {
+  content: "\f057\00a0";
+  color: #c25f77;
+}
+
+.markdown-body .question:before {
+  content: "\f059\00a0";
+  color: #96a6d7;
+}
+
+.markdown-body .note:before {
+  content: "\f040\00a0";
+  color: #d7c896;
+}
+
+.markdown-body .admonition::after {
+  content: normal;
+}
+
+.markdown-body .attention {
+  border-left: 6px solid #a6d796;
+}
+
+.markdown-body .caution {
+  border-left: 6px solid #d7a796;
+}
+
+.markdown-body .hint {
+  border-left: 6px solid #96c6d7;
+}
+
+.markdown-body .danger {
+  border-left: 6px solid #c25f77;
+}
+
+.markdown-body .question {
+  border-left: 6px solid #96a6d7;
+}
+
+.markdown-body .note {
+  border-left: 6px solid #d7c896;
+}
+
+.markdown-body .admonition>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body .admonition>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* progress bar*/
+.markdown-body .progress {
+  display: block;
+  width: 300px;
+  margin: 10px 0;
+  height: 24px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #ededed;
+  position: relative;
+  box-shadow: inset -1px 1px 3px rgba(0, 0, 0, .1);
+}
+
+.markdown-body .progress-label {
+  position: absolute;
+  text-align: center;
+  font-weight: bold;
+  width: 100%; margin: 0;
+  line-height: 24px;
+  color: #333;
+  text-shadow: 1px 1px 0 #fefefe, -1px -1px 0 #fefefe, -1px 1px 0 #fefefe, 1px -1px 0 #fefefe, 0 1px 0 #fefefe, 0 -1px 0 #fefefe, 1px 0 0 #fefefe, -1px 0 0 #fefefe, 1px 1px 2px #000;
+  -webkit-font-smoothing: antialiased !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.markdown-body .progress-bar {
+  height: 24px;
+  float: left;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #96c6d7;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(0, 0, 0, .1);
+  background-size: 30px 30px;
+  background-image: -webkit-linear-gradient(
+    135deg, rgba(255, 255, 255, .4) 27%,
+    transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%,
+    transparent 77%, transparent
+  );
+  background-image: -moz-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -ms-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -o-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+}
+
+.markdown-body .progress-100plus .progress-bar {
+  background-color: #a6d796;
+}
+
+.markdown-body .progress-80plus .progress-bar {
+  background-color: #c6d796;
+}
+
+.markdown-body .progress-60plus .progress-bar {
+  background-color: #d7c896;
+}
+
+.markdown-body .progress-40plus .progress-bar {
+  background-color: #d7a796;
+}
+
+.markdown-body .progress-20plus .progress-bar {
+  background-color: #d796a6;
+}
+
+.markdown-body .progress-0plus .progress-bar {
+  background-color: #c25f77;
+}
+
+.markdown-body .candystripe-animate .progress-bar{
+  -webkit-animation: animate-stripes 3s linear infinite;
+  -moz-animation: animate-stripes 3s linear infinite;
+  animation: animate-stripes 3s linear infinite;
+}
+
+@-webkit-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@-moz-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+.markdown-body .gloss .progress-bar {
+  box-shadow:
+    inset 0 4px 12px rgba(255, 255, 255, .7),
+    inset 0 -12px 0 rgba(0, 0, 0, .05);
+}
+
+/* Multimarkdown Critic Blocks */
+.markdown-body .critic_mark {
+  background: #ff0;
+}
+
+.markdown-body .critic_delete {
+  color: #c82829;
+  text-decoration: line-through;
+}
+
+.markdown-body .critic_insert {
+  color: #718c00 ;
+  text-decoration: underline;
+}
+
+.markdown-body .critic_comment {
+  color: #8e908c;
+  font-style: italic;
+}
+
+.markdown-body .headeranchor {
+  font: normal normal 16px octicons-anchor;
+  line-height: 1;
+  display: inline-block;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.headeranchor:before {
+  content: '\f05c';
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 3px;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 4px 0.25em -20px;
+  vertical-align: middle;
+}
+
+/* Media */
+@media only screen and (min-width: 480px) {
+  .markdown-body {
+    font-size:14px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .markdown-body {
+    font-size:16px;
+  }
+}
+
+@media print {
+  .markdown-body * {
+    background: transparent !important;
+    color: black !important;
+    filter:none !important;
+    -ms-filter: none !important;
+  }
+
+  .markdown-body {
+    font-size:12pt;
+    max-width:100%;
+    outline:none;
+    border: 0;
+  }
+
+  .markdown-body a,
+  .markdown-body a:visited {
+    text-decoration: underline;
+  }
+
+  .markdown-body .headeranchor-link {
+    display: none;
+  }
+
+  .markdown-body a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  .markdown-body abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  .markdown-body .ir a:after,
+  .markdown-body a[href^="javascript:"]:after,
+  .markdown-body a[href^="#"]:after {
+    content: "";
+  }
+
+  .markdown-body pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .markdown-body pre,
+  .markdown-body blockquote {
+    border: 1px solid #999;
+    padding-right: 1em;
+    page-break-inside: avoid;
+  }
+
+  .markdown-body .progress,
+  .markdown-body .progress-bar {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .markdown-body .progress {
+    border: 1px solid #ddd;
+  }
+
+  .markdown-body .progress-bar {
+    height: 22px;
+    border-right: 1px solid #ddd;
+  }
+
+  .markdown-body tr,
+  .markdown-body img {
+    page-break-inside: avoid;
+  }
+
+  .markdown-body img {
+    max-width: 100% !important;
+  }
+
+  .markdown-body p,
+  .markdown-body h2,
+  .markdown-body h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .markdown-body h2,
+  .markdown-body h3 {
+    page-break-after: avoid;
+  }
+}
+</style><title>okhttp_3</title></head><body><article class="markdown-body"><h1 id="okhttp-httpcodec"><a name="user-content-okhttp-httpcodec" href="#okhttp-httpcodec" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>OkHttp 源码学习笔记 数据交换的流 HTTPCodec</h1>
+<p>在上一篇文章中介绍了okhttp中连接概念以及连接建立和管理，其中在拦截器链中的ConnectInterceptor负责建立连接，并在该连接上建立流，将其放置在拦截器链中，在拦截器链中的最后一个拦截器CallServerInterceptor，通过使用流的操作完成网络请求的数据交换。下面从该拦截器开始学习okhttp时如果通过流的操作完成网络通信的。</p>
+<h2 id="1-callserverinterceptor"><a name="user-content-1-callserverinterceptor" href="#1-callserverinterceptor" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>1. 最后一个拦截器CallServerInterceptor</h2>
+<p>CallServerInterceptor是okhttp中的最后一个拦截器，在拦截器链中，拦截器的顺序是用户定义的应用拦截器，RetryAndFollowUpInterceptor, BridgeInterceptor, CacheInterceptor, ConnectInterceptor, 网络拦截器，以及最后的CallServerInterceptor。前面的若干拦截器的作用主要包括两个方面，一是在递归调用链中对Request和返回的Response进行处理，这主要是针对用户自定义的拦截器，完成我们在应用中不同的需求；二是在拦截器链中完成一定功能，为最终的网络请求提供帮助，这主要是针对okhttp中定义的拦截器，比如ConnectInterceptor主要作用就是根据请求建立连接和流对象，从而帮助最终完成网络请求。虽然作用不同，但是这两类拦截器的代码结构都有共同的特点，即基本包括三个步骤，从chain对象中获取request对象以及其他对象，对请求做处理，然后调用chain.proceed()方法获取网络请求response， 最后在第三步中对响应做响应处理并返回处理之后的Response，当然部分拦截器可以没有第一步和第三步，但是基本结构都是一致的。然而，最后的一个拦截器CallServerInterceptor，其结构则与上述拦截器的结构有所不同，它的主要功能就是建立好的流对象，完成数据通信。<br />
+这里首先简单介绍一下流对象，在okhttp中，流对象对应着HttpCodec， 它有对应的两个子类， Http1Codec和Http2Codec， 分别对应Http1.1协议以及Http2.0协议，本文主要学习前者。在Http1Codec中主要包括两个重要的属性，即source和sink，它们分别封装了socket的输入和输出，CallServerInterceptor正是利用HttpCodec提供的I/O操作完成网络通信。下面来看CallServerInterceptor的源码。<br />
+对于拦截器，依然是学习它的intercept方法：<br />
+<pre><code> @Override 
+ public Response intercept(Chain chain) throws IOException {
+    RealInterceptorChain realChain = (RealInterceptorChain) chain;
+    HttpCodec httpCodec = realChain.httpStream();
+    StreamAllocation streamAllocation = realChain.streamAllocation();
+    RealConnection connection = (RealConnection) realChain.connection();
+    Request request = realChain.request();
+
+    long sentRequestMillis = System.currentTimeMillis();
+    //1. 向socket中写入请求header信息
+    httpCodec.writeRequestHeaders(request);
+
+    Response.Builder responseBuilder = null;
+    if (HttpMethod.permitsRequestBody(request.method()) &amp;&amp; request.body() != null) {
+      //a. 省略部分
+      ...
+
+      if (responseBuilder == null) {
+        //2. 向socket中写入请求body信息
+        Sink requestBodyOut = httpCodec.createRequestBody(request, request.body().contentLength());
+        BufferedSink bufferedRequestBody = Okio.buffer(requestBodyOut);
+        request.body().writeTo(bufferedRequestBody);
+        bufferedRequestBody.close();
+      } else if (!connection.isMultiplexed()) {
+        //b.省略部分
+      }
+    }
+    //3. 完成网络请求的写入
+    httpCodec.finishRequest();
+
+    //4. 读取网络响应header信息
+    if (responseBuilder == null) {
+      responseBuilder = httpCodec.readResponseHeaders(false);
+    }
+
+    Response response = responseBuilder
+        .request(request)
+        .handshake(streamAllocation.connection().handshake())
+        .sentRequestAtMillis(sentRequestMillis)
+        .receivedResponseAtMillis(System.currentTimeMillis())
+        .build();
+
+    int code = response.code();
+    if (forWebSocket &amp;&amp; code == 101) {
+        //c. 省略部分
+    } else {
+      //5. 读取网络响应的body信息
+      response = response.newBuilder()
+          .body(httpCodec.openResponseBody(response))
+          .build();
+    }
+    // d. 省略部分 
+    return response;
+  }
+</code></pre><br />
+本文对代码做部分的省略，突出主要的流程，省略已经做了a, b, c, b的标注，后面再分别对其学习分析，然后是最主要的流程做了注释，主要是分成5步，在执行网络请求之前，首先时从拦截器链中获取连接，流以及它们二者的管理者streamAllocation，还有原始的网络请求request，然后执行以下五个步骤<br />
+ - 1  向socket中写入请求header信息<br />
+ - 2  向socket中写入请求body信息<br />
+ - 3  完成网络请求的写入<br />
+ - 4  读取网络响应header信息<br />
+ - 5  读取网络响应的body信息<br />
+注意在一次网络请求中可能并不包括所有的这五个步骤，比如第二不，写入请求体，只有请求方法中有请求体的时候才会写入，而且有些情况只有在得到服务器允许的时候才会写入请求体，这一点后面会有提到；另外这里所使用的写入和读取两个词并不完全准确，比如第二步只是内存与socket的输出流建立关系，并没有真正写入，直到第三步刷新时才会将请求的信息写入到socket的输出流中，同样地，第五步中获取到响应的body信息，只是获取一个流对象，只有在应用代码中调用流对象的读方法或者response.string()方法等，才会从socket的输入流中读取信息到应用的内存中使用。<br />
+这五步逻辑很清晰，也很容易理解，下面中逐个学习省略的四个部分。首先看省略部分a的代码：<br />
+<pre><code>      // If there's a &quot;Expect: 100-continue&quot; header on the request, wait for a &quot;HTTP/1.1 100
+      // Continue&quot; response before transmitting the request body. If we don't get that, return what
+      // we did get (such as a 4xx response) without ever transmitting the request body.
+      if (&quot;100-continue&quot;.equalsIgnoreCase(request.header(&quot;Expect&quot;))) {
+        httpCodec.flushRequest();
+        responseBuilder = httpCodec.readResponseHeaders(true);
+      }
+</code></pre><br />
+这里时处理一种特殊情况，即首先发送询问服务器是否可以发送带有请求体的请求，在该请求中请求的头部信息中添加Expect:100-continue字段，服务器如果可以接受请求体则可以返回一个100的响应码，客户端继续发送请求，具体的可以参考相关文章对100响应码的介绍。<br />
+这里我们看到如果请求中有该头部信息会跳过第二步，直接执行三四步，获取响应信息，我们继续往下看okhttp对该特殊情况的处理逻辑。这里我们有必要提前看一下HttpCodec的具体实现，当然我们这里是分析Http1Codec的readResponseHeaders(boolean)代码：<br />
+<pre><code>@Override public Response.Builder readResponseHeaders(boolean expectContinue) throws IOException {
+    ...
+    try {
+      StatusLine statusLine = StatusLine.parse(source.readUtf8LineStrict());
+
+      Response.Builder responseBuilder = new Response.Builder()
+          .protocol(statusLine.protocol)
+          .code(statusLine.code)
+          .message(statusLine.message)
+          .headers(readHeaders());
+
+      if (expectContinue &amp;&amp; statusLine.code == HTTP_CONTINUE) {
+        return null;
+      }
+      ...
+    } catch (EOFException e) {
+      ...
+    }
+  }
+</code></pre><br />
+这里因为时分析特殊情况，所以这里只看参数为true的情况，从代码中可以看到获取响应头部信息包括获取响应行和响应头两部分，具体代码可以自行查看，这里不再展开，当服务器同意接收请求体时回返回100的响应码，可见此时该方法返回空，其他情况会返回非空的响应对象。下面再回到CallServerInterceptor中的代码<br />
+当responseBuilder为空时继续执行正常逻辑，即从第二步开始执行。当responseBuilder不为空时，就不可以写如请求体信息，下面的else if()语句时针对Http2协议时关闭当前连接，这里我么暂时不考虑，Http1.1协议下，代码会跳过写请求体的步骤，继续执行，并且因为responseBuilder不为空也会跳过读取响应头的步骤，因为之前读过一次，但是响应码不是100而已，可见当响应码为100时会读取两次响应头，当然也执行了两次请求（注意httpCodec.finishRequest()方法的调用就是刷新输出流，也就相当于执行了一次请求）。<br />
+c省略部分是针对websocket所做的处理，由于对H5以及websocket不了解，这里就跳过该部分，有兴趣的同学可以自行查看。<br />
+d省略部分就是收尾工作，对一些特殊情况的处理，下面为代码：<br />
+<pre><code>if (&quot;close&quot;.equalsIgnoreCase(response.request().header(&quot;Connection&quot;))
+        || &quot;close&quot;.equalsIgnoreCase(response.header(&quot;Connection&quot;))) {
+      streamAllocation.noNewStreams();
+    }
+
+    if ((code == 204 || code == 205) &amp;&amp; response.body().contentLength() &gt; 0) {
+      throw new ProtocolException(
+          &quot;HTTP &quot; + code + &quot; had non-zero Content-Length: &quot; + response.body().contentLength());
+    }
+</code></pre><br />
+代码逻辑很简单，根据响应信息在必要时关闭连接，在上一篇关于连接的文章中我们介绍了streamAllocation的作用，对应关闭和回收资源的问题没有考虑清除，本文会在介绍完流的概念以后，再具体分析关于连接的关闭以及资源回收的问题。最后为检查响应码204和205两种响应，这两种响应没有响应体。<br />
+至此我们分析完了CallServerInterceptor的代码，可以看出由它实现的网络请求，而在完成这一功能的若干步骤中都是依赖HttpCodec提供的功能来完成的，我们只考虑Http1.1协议，所以下面开始分析Http1Codec的代码。<br />
+在分析以上所提到的五个步骤之前，需要说明在Http1Codec中使用了状态模式，其实就是对象维护它所处的状态，在不同的状态下执行对应的逻辑，并更新状态，在执行逻辑之前通过检查对象的状态避免网络请求的若干执行步骤发生错乱。首先来看状态的定义：</p>
+<p><pre><code>  private static final int STATE_IDLE = 0; // Idle connections are ready to write request headers.
+  private static final int STATE_OPEN_REQUEST_BODY = 1;
+  private static final int STATE_WRITING_REQUEST_BODY = 2;
+  private static final int STATE_READ_RESPONSE_HEADERS = 3;
+  private static final int STATE_OPEN_RESPONSE_BODY = 4;
+  private static final int STATE_READING_RESPONSE_BODY = 5;
+  private static final int STATE_CLOSED = 6;
+</code></pre><br />
+下面是Http1Codec的属性域：<br />
+<pre><code>  /** The client that configures this stream. May be null for HTTPS proxy tunnels. */
+  final OkHttpClient client;
+  /** The stream allocation that owns this stream. May be null for HTTPS proxy tunnels. */
+  final StreamAllocation streamAllocation;
+
+  final BufferedSource source;
+  final BufferedSink sink;
+  int state = STATE_IDLE;
+</code></pre><br />
+这些属性域很容易理解，首先持有client，可以使用它所提供的功能，通常是获取一些用户所设置的属性，其次是streamAllocation，它是连接与流的桥梁，所以很容易理解需要它获取关于连接的功能。然后就是该流对象封装的输出流和输入流，两个流内部封装的自然就是socket的了。最后就是对象所处的状态。介绍完属性域以后我们就可以分步骤分析Http1Codec提供的功能了，在这些步骤中，逻辑很明确，首先检查状态，然后执行逻辑，最后更新状态，当然执行逻辑和更新状态是可以交换的，不会造成影响，这步骤分析中我们不再考虑状态的问题重点只是关系逻辑的执行。<br />
+-1. 首先第一步，写请求头：<br />
+<pre><code>  @Override public void writeRequestHeaders(Request request) throws IOException {
+    String requestLine = RequestLine.get(
+        request, streamAllocation.connection().route().proxy().type());
+    writeRequest(request.headers(), requestLine);
+  }
+
+  public void writeRequest(Headers headers, String requestLine) throws IOException {
+    if (state != STATE_IDLE) throw new IllegalStateException(&quot;state: &quot; + state);
+    sink.writeUtf8(requestLine).writeUtf8(&quot;\r\n&quot;);
+    for (int i = 0, size = headers.size(); i &lt; size; i++) {
+      sink.writeUtf8(headers.name(i))
+          .writeUtf8(&quot;: &quot;)
+          .writeUtf8(headers.value(i))
+          .writeUtf8(&quot;\r\n&quot;);
+    }
+    sink.writeUtf8(&quot;\r\n&quot;);
+    state = STATE_OPEN_REQUEST_BODY;
+  }
+</code></pre><br />
+执行逻辑很清晰，可以分成两部分，对应Http协议，即写入请求行和请求头，至于请求行的获取有兴趣的同学可以自行查看源码。<br />
+-2. 接着，第二步，写请求体，这一步中Http1Codec提供一个包装了sink的输出流，也是一个Sink， 这里我们看是如何封装sink的：<br />
+<pre><code> @Override public Sink createRequestBody(Request request, long contentLength) {
+    if (&quot;chunked&quot;.equalsIgnoreCase(request.header(&quot;Transfer-Encoding&quot;))) {
+      // Stream a request body of unknown length.
+      return newChunkedSink();
+    }
+
+    if (contentLength != -1) {
+      // Stream a request body of a known length.
+      return newFixedLengthSink(contentLength);
+    }
+
+    throw new IllegalStateException(
+        &quot;Cannot stream a request body without chunked encoding or a known content length!&quot;);
+  }
+</code></pre><br />
+属性Http协议的同学都知道其实请求体和响应体可以分成固定长度和非固定长度两种，其中非固定长度由头部信息中Transfer-Encoding=chunked来标识，固定长度则有对应的头部信息标识实体信息的对应长度。这里我们以非固定长度为例分析Http1Codec是如何封装sink的，对于固定长度的也是类似的逻辑。</p>
+<p><pre><code>  public Sink newChunkedSink() {
+    if (state != STATE_OPEN_REQUEST_BODY) throw new IllegalStateException(&quot;state: &quot; + state);
+    state = STATE_WRITING_REQUEST_BODY;
+    return new ChunkedSink();
+  }
+
+   private final class ChunkedSink implements Sink {
+    ...
+
+    @Override public void write(Buffer source, long byteCount) throws IOException {
+      if (closed) throw new IllegalStateException(&quot;closed&quot;);
+      if (byteCount == 0) return;
+
+      sink.writeHexadecimalUnsignedLong(byteCount);
+      sink.writeUtf8(&quot;\r\n&quot;);
+      sink.write(source, byteCount);
+      sink.writeUtf8(&quot;\r\n&quot;);
+    }
+
+    @Override public synchronized void flush() throws IOException {
+      if (closed) return; // Don't throw; this stream might have been closed on the caller's behalf.
+      sink.flush();
+    }
+
+    @Override public synchronized void close() throws IOException {
+      if (closed) return;
+      closed = true;
+      sink.writeUtf8(&quot;0\r\n\r\n&quot;);
+      detachTimeout(timeout);
+      state = STATE_READ_RESPONSE_HEADERS;
+    }
+  }
+</code></pre><br />
+这里使用一个内部类来封装sink， 这里我们只看其中的三个重要的方法，即write() flush() close()方法，逻辑都很清晰，非固定长度的请求体，都是在第一行写入一段数据的长度，然后在之后写入该段数据，从write()方法中可以看出是讲buffer中的数据写入到sink对象中，如果熟悉okio的执行逻辑，对此应该很容易理解。然后刷新和关闭逻辑则很简单，其中关闭时注意更新状态。<br />
+对于固定长度的请求体，其封装sink的逻辑是类似的，其中需要传入一个RemainingLength， 保证写数据结束时保证数据长度是正确的即可，有兴趣的可以查看代码。<br />
+-3. 第三步是完成请求的写入，其实这一步其实很简单，只有一行代码，就是执行流的刷新：<br />
+<pre><code>  @Override public void finishRequest() throws IOException {
+    sink.flush();
+  }
+</code></pre><br />
+注意这一步是不需要检查状态的，因为此时的状态有可能是STATE_OPEN_REQUEST_BODY（没有请求体的情况）或者STATE_READ_RESPONSE_HEADERS(已经完成请求体写入的情况)。这一步只是刷新流，所以什么情况下都不会造成影响，所以没有必要检查状态，也没有更新状态，保持之前的状态即可。<br />
+-4. 第四步读取请求头，这一步的代码我们在前面是见到过的，这里再次贴出，方便查阅，并且没有省略：<br />
+<pre><code>@Override public Response.Builder readResponseHeaders(boolean expectContinue) throws IOException {
+    if (state != STATE_OPEN_REQUEST_BODY &amp;&amp; state != STATE_READ_RESPONSE_HEADERS) {
+      throw new IllegalStateException(&quot;state: &quot; + state);
+    }
+    try {
+      StatusLine statusLine = StatusLine.parse(source.readUtf8LineStrict());
+      Response.Builder responseBuilder = new Response.Builder()
+          .protocol(statusLine.protocol)
+          .code(statusLine.code)
+          .message(statusLine.message)
+          .headers(readHeaders());
+
+      if (expectContinue &amp;&amp; statusLine.code == HTTP_CONTINUE) {
+        return null;
+      }
+
+      state = STATE_OPEN_RESPONSE_BODY;
+      return responseBuilder;
+    } catch (EOFException e) {
+      // Provide more context if the server ends the stream before sending a response.
+      IOException exception = new IOException(&quot;unexpected end of stream on &quot; + streamAllocation);
+      exception.initCause(e);
+      throw exception;
+    }
+  }
+</code></pre><br />
+可以此时所处的状态有可能为STATE_OPEN_REQUEST_BODY和STATE_READ_RESPONSE_HEADERS两种，然后读取请求行和请求头部信息，并返回响应的Builder。<br />
+-5. 第五步为获取响应体：<br />
+<pre><code>  @Override public ResponseBody openResponseBody(Response response) throws IOException {
+    Source source = getTransferStream(response);
+    return new RealResponseBody(response.headers(), Okio.buffer(source));
+  }
+</code></pre><br />
+在之前的介绍中，我们知道响应Response对象中是封装一个source对象，用于读取响应数据。所以ResponseBody的构建就是需要响应头和响应体两部分即可，响应头在上一部分中已经添加到response对象中了，headers()获取响应头即可。下面分析，如何封装source对象，获取一个对应的source对象，可能有些拗口，如果你熟悉装饰模式，以及okio的结构应该很容易明白。下面看getTransferStream的代码：<br />
+<pre><code>private Source getTransferStream(Response response) throws IOException {
+    if (!HttpHeaders.hasBody(response)) {
+      return newFixedLengthSource(0);
+    }
+
+    if (&quot;chunked&quot;.equalsIgnoreCase(response.header(&quot;Transfer-Encoding&quot;))) {
+      return newChunkedSource(response.request().url());
+    }
+
+    long contentLength = HttpHeaders.contentLength(response);
+    if (contentLength != -1) {
+      return newFixedLengthSource(contentLength);
+    }
+
+    // Wrap the input stream from the connection (rather than just returning
+    // &quot;socketIn&quot; directly here), so that we can control its use after the
+    // reference escapes.
+    return newUnknownLengthSource();
+  }
+</code></pre><br />
+这里和写入请求体的地方十分类似，响应体也是分为固定长度和非固定长度两种，除此以外，为了代码的健壮性okhttp还定义了UnknownLengthSource，这里我们不对该意外情况分析，下面我们以固定长度为例分析source的封装。<br />
+<pre><code>  private class FixedLengthSource extends AbstractSource {
+    private long bytesRemaining;
+
+    public FixedLengthSource(long length) throws IOException {
+      bytesRemaining = length;
+      if (bytesRemaining == 0) {
+        endOfInput(true);
+      }
+    }
+
+    @Override public long read(Buffer sink, long byteCount) throws IOException {
+      if (byteCount &lt; 0) throw new IllegalArgumentException(&quot;byteCount &lt; 0: &quot; + byteCount);
+      if (closed) throw new IllegalStateException(&quot;closed&quot;);
+      if (bytesRemaining == 0) return -1;
+
+      long read = source.read(sink, Math.min(bytesRemaining, byteCount));
+      if (read == -1) {
+        endOfInput(false); // The server didn't supply the promised content length.
+        throw new ProtocolException(&quot;unexpected end of stream&quot;);
+      }
+
+      bytesRemaining -= read;
+      if (bytesRemaining == 0) {
+        endOfInput(true);
+      }
+      return read;
+    }
+
+    @Override public void close() throws IOException {
+      if (closed) return;
+
+      if (bytesRemaining != 0 &amp;&amp; !Util.discard(this, DISCARD_STREAM_TIMEOUT_MILLIS, MILLISECONDS)) {
+        endOfInput(false);
+      }
+
+      closed = true;
+    }
+  }
+</code></pre><br />
+这里可以看到有一个成员变量bytesRemaining</p>
+<p>在okttp3中，将流定义成HttpCodec， 也没有去查为什么叫这个名字，有知道的同学欢迎在评论中告知，不胜感激。还是同样的原因，我们只考虑Http1.1及以下版本，我们只需要考虑Http1Codec代码。对于Http1Codec的学习，我们还是很有必要先看一下它的类注释，描述的很清楚<br />
+<pre><code>/**
+ * A socket connection that can be used to send HTTP/1.1 messages. This class strictly enforces the
+ * following lifecycle:
+ *
+ * &lt;ol&gt;
+ *     &lt;li&gt;{@linkplain #writeRequest Send request headers}.
+ *     &lt;li&gt;Open a sink to write the request body. Either {@linkplain #newFixedLengthSink
+ *         fixed-length} or {@link #newChunkedSink chunked}.
+ *     &lt;li&gt;Write to and then close that sink.
+ *     &lt;li&gt;{@linkplain #readResponse Read response headers}.
+ *     &lt;li&gt;Open a source to read the response body. Either {@linkplain #newFixedLengthSource
+ *         fixed-length}, {@linkplain #newChunkedSource chunked} or {@linkplain
+ *         #newUnknownLengthSource unknown length}.
+ *     &lt;li&gt;Read from and close that source.
+ * &lt;/ol&gt;
+ *
+ * &lt;p&gt;Exchanges that do not have a request body may skip creating and closing the request body.
+ * Exchanges that do not have a response body can call {@link #newFixedLengthSource(long)
+ * newFixedLengthSource(0)} and may skip reading and closing that source.
+ */
+</code></pre><br />
+流的功能也很清楚就是完成最终的HTTP通信，在socket提供的输出流中写出请求，并在socket的输出流中读取响应。注释也将的很清楚，Http1Codec要求用户整个请求过程需要遵守下列的执行过程，即依次调用如下方法完成网络请求。顺序依次为：写请求（发送请求头部信息）， 打开一个开写入请求体的输出流， 写入请求体并关闭流，读取响应头部信息，打开一个输入响应体的输入流， 读取响应体并关闭流。过程对称而且很容易理解，那么我们就直接来看这些代码实现中都做了哪些事情:</p>
+<p><pre><code>public final class Http1Codec implements HttpCodec {
+  private static final int STATE_IDLE = 0; // Idle connections are ready to write request headers.
+  private static final int STATE_OPEN_REQUEST_BODY = 1;
+  private static final int STATE_WRITING_REQUEST_BODY = 2;
+  private static final int STATE_READ_RESPONSE_HEADERS = 3;
+  private static final int STATE_OPEN_RESPONSE_BODY = 4;
+  private static final int STATE_READING_RESPONSE_BODY = 5;
+  private static final int STATE_CLOSED = 6;
+
+  /** The client that configures this stream. May be null for HTTPS proxy tunnels. */
+  final OkHttpClient client;
+  /** The stream allocation that owns this stream. May be null for HTTPS proxy tunnels. */
+  final StreamAllocation streamAllocation;
+
+  final BufferedSource source;
+  final BufferedSink sink;
+  int state = STATE_IDLE;
+
+  public Http1Codec(OkHttpClient client, StreamAllocation streamAllocation, BufferedSource source,
+      BufferedSink sink) {
+    this.client = client;
+    this.streamAllocation = streamAllocation;
+    this.source = source;
+    this.sink = sink;
+  }
+</code></pre><br />
+这里使用六个常量标识HttpCodec对象目前所处的状态， 初始化为IDLE状态， sink和source分别为从connection中获取的输入输出流，其实也就是socket的输入输出流。部分步骤可以省略</p>
+<p><pre><code> //1. 写请求头部信息，格式与Http请求报文相同
+  /** Returns bytes of a request header for sending on an HTTP transport. */
+  public void writeRequest(Headers headers, String requestLine) throws IOException {
+    if (state != STATE_IDLE) throw new IllegalStateException(&quot;state: &quot; + state);
+    sink.writeUtf8(requestLine).writeUtf8(&quot;\r\n&quot;);
+    for (int i = 0, size = headers.size(); i &lt; size; i++) {
+      sink.writeUtf8(headers.name(i))
+          .writeUtf8(&quot;: &quot;)
+          .writeUtf8(headers.value(i))
+          .writeUtf8(&quot;\r\n&quot;);
+    }
+    sink.writeUtf8(&quot;\r\n&quot;);
+    state = STATE_OPEN_REQUEST_BODY;
+  }
+
+  //2. 写请求体
+   @Override public Sink createRequestBody(Request request, long contentLength) {
+
+   //不固定长度
+    if (&quot;chunked&quot;.equalsIgnoreCase(request.header(&quot;Transfer-Encoding&quot;))) {
+      // Stream a request body of unknown length.
+      return newChunkedSink();
+    }
+
+    //固定长度
+    if (contentLength != -1) {
+      // Stream a request body of a known length.
+      return newFixedLengthSink(contentLength);
+    }
+
+    throw new IllegalStateException(
+        &quot;Cannot stream a request body without chunked encoding or a known content length!&quot;);
+  }
+  //关于两个Sink, 其实就是输出流，它起到一个中介作用，在CallServierIntercepter中或通过Http1CodeC流对象获取到这两个Sink输出流，
+  //而将请求体的内容写入到这两个输出流，进而会调用他们的write(source)方法，最终写入到Http1Codec中的Sink对象，也就是写入到socket
+
+  //3. 写入和关闭方法，这一步的方法并不在Http1Codec中，而是如上所述，在CallServerIntercepter中，将写入请求体，并关闭创建的Sink对象
+
+  //4. 读取响应头
+   /** Parses bytes of a response header from an HTTP transport. */
+  public Response.Builder readResponse() throws IOException {
+    if (state != STATE_OPEN_REQUEST_BODY &amp;&amp; state != STATE_READ_RESPONSE_HEADERS) {
+      throw new IllegalStateException(&quot;state: &quot; + state);
+    }
+
+    try {
+      while (true) {
+        StatusLine statusLine = StatusLine.parse(source.readUtf8LineStrict());
+
+        //读取响应行以及头部信息，构建响应构建者并设置对应参数
+        Response.Builder responseBuilder = new Response.Builder()
+            .protocol(statusLine.protocol)
+            .code(statusLine.code)
+            .message(statusLine.message)
+            .headers(readHeaders());
+
+        if (statusLine.code != HTTP_CONTINUE) {
+          state = STATE_OPEN_RESPONSE_BODY;
+          return responseBuilder;
+        }
+      }
+    } catch (EOFException e) {
+        ...
+    }
+  }
+
+  //5. 创建响应的输入流
+  private Source getTransferStream(Response response) throws IOException {
+    if (!HttpHeaders.hasBody(response)) {
+      return newFixedLengthSource(0);
+    }
+
+    if (&quot;chunked&quot;.equalsIgnoreCase(response.header(&quot;Transfer-Encoding&quot;))) {
+      return newChunkedSource(response.request().url());
+    }
+
+    long contentLength = HttpHeaders.contentLength(response);
+    if (contentLength != -1) {
+      return newFixedLengthSource(contentLength);
+    }
+    ...
+  }
+</code></pre><br />
+流的主要功能完成数据的通信，所以它的主要流程就是针对封装Socket的输入输出，okhttp中使用Connecton封装Socket, StreamAllocation作为桥梁使得在连接上建立一个流，流就可以获取连接封装socket的输入流和输出流，然后HttpCodec对象针对输出流和输入流完成数据通信，并对外提供写入读出方法。这里主要流程分成五步在代码中说明，其中输入输出都是对称的， 其中writeResquest，和readResponse对应，前者将传入的请求头写入到sink对象，后者则是读取source对象中的数据构建一个Response.Builder，提供给调用者来构建Response， <br />
+createResquestBody(request, contentLength)和openResponseBody(Response)对应，其中前者可以看作是对外提供一个输出流，该输出流包裹着sink，这样调用者就可以将请求体写入到构建的输出流中，后者与之对应，就是封装source，并构建一个ResponseBody提供给调用者，其中openResponseBody方法就是调用的上述getTransformStream方法来封装source的。最后是第三步，刷新并关闭，外部调用者可以调用如下方法：</p>
+<p><pre><code>@Override public void finishRequest() throws IOException {
+    sink.flush();
+  }
+</code></pre><br />
+而与之对应的source的关闭则由用户也就是使用者在处理完响应数据以后关闭ResponseBody，这也就是为什么ResponseBody必须要关闭。</p>
+<p>流的结束包括成功结束，终止取消，失败等多种情况，这里我们首先来看他们最终都会调用的释放资源的方法：<br />
+<pre><code> /**
+ * Releases resources held by this allocation. If sufficient resources are allocated, the
+ * connection will be detached or closed.
+ */
+private void deallocate(boolean noNewStreams, boolean released, boolean streamFinished) {
+  RealConnection connectionToClose = null;
+  synchronized (connectionPool) {
+    if (streamFinished) {
+      this.codec = null;
+    }
+    if (released) {
+      this.released = true;
+    }
+    if (connection != null) {
+      if (noNewStreams) {
+        connection.noNewStreams = true;
+      }
+      if (this.codec == null &amp;&amp; (this.released || connection.noNewStreams)) {
+        release(connection);
+        if (connection.allocations.isEmpty()) {
+          connection.idleAtNanos = System.nanoTime();
+          if (Internal.instance.connectionBecameIdle(connectionPool, connection)) {
+            connectionToClose = connection;
+          }
+        }
+        connection = null;
+      }
+    }
+  }
+  if (connectionToClose != null) {
+    Util.closeQuietly(connectionToClose.socket());
+  }
+}
+</code></pre><br />
+释放资源的方法包括三个参数，第一个noNewStream可以简单地理解为该allocation对应的connection对象已经不可用，可以回收了，可以从代码中看出connection.noNewstream标志位被设置，在连接管理部分我们会看到该连接会从连接池中回收。第二个参数可以理解为将allocation对象的引用可以从connection的管理流的链表中移除，但是这也只是标识可以，还需要等到流对应任务执行结束以后才可以移除，标识流任务执行完成就是第三个参数了。下面我们来分析代码的逻辑， finish以后流对象会被置空，但是释放该allocation对象，即从链表中移除该allocation对应的引用需要等到连接不可用或者调用了该allocation对用的release方法以后才可以。在释放了allocation对象以后需要检查对应的连接对象流的分配是否已经为空，没有流分配以后则调用connectionPool.becameIdle(connection)方法，这里由于该方法时包权限，所以也借助了Internal, 该方法试图从连接池中移除该连接，如果移除则返回true， 如果只是唤醒连接池的清理任务则返回false, 关于连接池我们在连接管理部分会做分析。我们可以看release(connection)方法所执行的释放任务：<br />
+<pre><code>/** Remove this allocation from the connection's list of allocations. */
+private void release(RealConnection connection) {
+  for (int i = 0, size = connection.allocations.size(); i &lt; size; i++) {
+    Reference&lt;StreamAllocation&gt; reference = connection.allocations.get(i);
+    if (reference.get() == this) {
+      connection.allocations.remove(i);
+      return;
+    }
+  }
+  throw new IllegalStateException();
+}
+
+/**
+   * Use this allocation to hold {@code connection}. Each call to this must be paired with a call to
+   * {@link #release} on the same connection.
+   */
+  public void acquire(RealConnection connection) {
+    assert (Thread.holdsLock(connectionPool));
+    connection.allocations.add(new StreamAllocationReference(this, callStackTrace));
+  }
+</code></pre></p>
+<p>这里前三个方法都会调用deallocate方法来释放资源，该方法有三个参数，分别标识对应的连接是否可以使用，是否将该StreamAllocation对象从Connection的引用流链表里移除，流是否完成任务。该方法主要作用是设置对应标志位，释放流，并在必要时（即一个连接上的StreamAllocation应用链表为空）释放连接，在连接管理部分还会介绍连接的释放。</p>
+<p>至此StreamAllocation就介绍完了，后面还有cancel和streamFailed方法，前者比较简单可自行查看，后者还不太清楚一些异常的含义，后续继续学习过程中会做补充，但已经不影响正常分析StreamAllocation的功能，此时我们已经明白该类的功能就是在连接之上新建一个流，完成通信任务，很好地起到了桥梁作用，可能看代码有些突兀，起初考虑先介绍Connection和HttpCodec， 但是没有StreamAllocation又很难说清楚，而StreamAllocation有依赖Connection的一些内容，所以这里关于acquire, release等与资源有关的部分有些不明白的可以在看完介绍连接管理部分以后再回过头再看一次StreamAllocation的代码，相结合理解或许会更清晰，这里我们首先明白他是如何完成新建流的就可以了。</p></article></body></html>
