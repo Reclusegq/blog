@@ -511,4 +511,293 @@ okio中使用timeout对象控制I/O的操作的超时。该超时机制使用了
     }
   }
 ```
-代码逻辑很简单，到达截止日期时就跑出异常，该方法用在一次I/O操作之后调用，通过调用一次该方法检查是否超时。+
+代码逻辑很简单，到达截止日期时就抛出异常，该方法用在一次I/O操作之后调用，通过调用一次该方法检查是否超时。该方法只考虑deadline一种时间参考。
+第二种方式是使用wait()方式等待一段时间，常用与输入和输出同步，比如输出操作等待输入一定的时间等，其方法代码如下：
+```
+public final void waitUntilNotified(Object monitor) throws InterruptedIOException {
+    try {
+      boolean hasDeadline = hasDeadline();
+      long timeoutNanos = timeoutNanos();
+
+      //1. 无限期等待
+      if (!hasDeadline && timeoutNanos == 0L) {
+        monitor.wait(); // There is no timeout: wait forever.
+        return;
+      }
+
+      //2. Compute how long we'll wait.（计算等待时长）
+      long waitNanos;
+      long start = System.nanoTime();
+      if (hasDeadline && timeoutNanos != 0) {
+        long deadlineNanos = deadlineNanoTime() - start;
+        waitNanos = Math.min(timeoutNanos, deadlineNanos);
+      } else if (hasDeadline) {
+        waitNanos = deadlineNanoTime() - start;
+      } else {
+        waitNanos = timeoutNanos;
+      }
+
+      //3. 等待
+      // Attempt to wait that long. This will break out early if the monitor is notified.
+      long elapsedNanos = 0L;
+      if (waitNanos > 0L) {
+        long waitMillis = waitNanos / 1000000L;
+        monitor.wait(waitMillis, (int) (waitNanos - waitMillis * 1000000L));
+        elapsedNanos = System.nanoTime() - start;
+      }
+
+      //4. 满足条件时抛异常
+      // Throw if the timeout elapsed before the monitor was notified.
+      if (elapsedNanos >= waitNanos) {
+        throw new InterruptedIOException("timeout");
+      }
+    } catch (InterruptedException e) {
+      throw new InterruptedIOException("interrupted");
+    }
+  }
+```
+该方法的逻辑流程已经在注释中说明。首先是处理没有等待时长的特殊情况，即无限期等待，直到有人唤醒。如果设置了等待时长，则计算时长以后进入等待状态，并等待一定时间。这里注意，由于该方法常用于输入和输出的同步问题，因此这里就会出现两种可能，一是等待一方被另外一方唤醒，程序继续执行，此时不超时则不抛异常，正常退出。另外一种可能就是等待超时而不是被另一方唤醒，此时检查发现超时直接抛出异常。
+okio中Timeout的机制较为简单，主要是throwIfReached()和waitUntilNotified()方法，前者用于在每次执行I/O操作之后调用检查是否超时，后者则是用于输入和输出的同步，需要数据的在某个对象上等待一定时间，数据准备好以后通知，如果超时则会抛出异常。
+由于okio库主要是服务于okhttp用于解决网络请求的问题，因此对于okio的超时机制，Timeout还有一个子类需要学习，即AsyncTimeout，该类有两个方法用于包装输入和输出，即source和sink，返回一个包装了自动检查超时的输入输出对象。下面来看AsyncTimeout的代码。
+AsyncTimeout主要作用是用于包装输入输出流，因此首先从包装方法source()和sink()，下面来看source()方法：
+```
+public final Source source(final Source source) {
+    return new Source() {
+      @Override public long read(Buffer sink, long byteCount) throws IOException {
+        boolean throwOnTimeout = false;
+        enter();
+        try {
+          long result = source.read(sink, byteCount);
+          throwOnTimeout = true;
+          return result;
+        } catch (IOException e) {
+          throw exit(e);
+        } finally {
+          exit(throwOnTimeout);
+        }
+      }
+      ...
+    }
+  }
+```
+这里我们只看内部类的read()方法，flush()和close()方法可以自行查看。在read()方法中将可能会超时的操作包含在enter()和exit()之间用于处理超时，下面再来看sink()方法：
+```
+public final Sink sink(final Sink sink) {
+    return new Sink() {
+      @Override public void write(Buffer source, long byteCount) throws IOException {
+        checkOffsetAndCount(source.size, 0, byteCount);
+
+        while (byteCount > 0L) {
+          //1. 计算写入的字节长度
+          // Count how many bytes to write. This loop guarantees we split on a segment boundary.
+          long toWrite = 0L;
+          for (Segment s = source.head; toWrite < TIMEOUT_WRITE_SIZE; s = s.next) {
+            int segmentSize = source.head.limit - source.head.pos;
+            toWrite += segmentSize;
+            if (toWrite >= byteCount) {
+              toWrite = byteCount;
+              break;
+            }
+          }
+
+          //2.执行一次写入
+          // Emit one write. Only this section is subject to the timeout.
+          boolean throwOnTimeout = false;
+          enter();
+          try {
+            sink.write(source, toWrite);
+            byteCount -= toWrite;
+            throwOnTimeout = true;
+          } catch (IOException e) {
+            throw exit(e);
+          } finally {
+            exit(throwOnTimeout);
+          }
+        }
+      }
+      ...
+    };
+  }
+```
+从这段代码来看，首先计算需要写入的字节长度，然后执行写入的逻辑，同样，执行写入这个可能超时的逻辑也是添加在enter()和exit()方法之间的，同理，flush()和close()方法与之类似，因此对于AsyncTimeout的分析主要是去看enter()和exit()中主要做什么工作，来检测中间过程的可能发生的超时。
+首先来看其域属性：
+```
+  static AsyncTimeout head;
+
+  /** True if this node is currently in the queue. */
+  private boolean inQueue;
+
+  /** The next node in the linked list. */
+  private AsyncTimeout next;
+
+  /** If scheduled, this is the time that the watchdog should time this out. */
+  private long timeoutAt;
+```
+其中第一个head是一个属于类的静态域，从head和next的名称上来看，AsyncTimeout是组建一个链表或者队列的节点，而head是一个静态域，那么说明这是一个全局唯一的队列或者链表，而inQueue标识该节点是否处于该队列，timeoutAt则记录该节点超时的时间点。下面我们从enter()方法开始分析：
+```
+public final void enter() {
+    if (inQueue) throw new IllegalStateException("Unbalanced enter/exit");
+    long timeoutNanos = timeoutNanos();
+    boolean hasDeadline = hasDeadline();
+    if (timeoutNanos == 0 && !hasDeadline) {
+      return; // No timeout and no deadline? Don't bother with the queue.
+    }
+    inQueue = true;
+    scheduleTimeout(this, timeoutNanos, hasDeadline);
+  }
+```
+逻辑很简单，检查条件，设置状态属性，然后调用scheduleTimeout()方法，可以想到该方法是将节点加入队列的方法，其代码为：
+```
+  private static synchronized void scheduleTimeout(
+      AsyncTimeout node, long timeoutNanos, boolean hasDeadline) {
+        //1. 控队列，第一次加入检测超时对象，初始化head，并开启看门狗，其实就是一个检测的线程，后面分析其逻辑
+    // Start the watchdog thread and create the head node when the first timeout is scheduled.
+    if (head == null) {
+      head = new AsyncTimeout();
+      new Watchdog().start();
+    }
+    //2. 计算节点的超时时间点
+    long now = System.nanoTime();
+    if (timeoutNanos != 0 && hasDeadline) {
+      // Compute the earliest event; either timeout or deadline. Because nanoTime can wrap around,
+      // Math.min() is undefined for absolute values, but meaningful for relative ones.
+      node.timeoutAt = now + Math.min(timeoutNanos, node.deadlineNanoTime() - now);
+    } else if (timeoutNanos != 0) {
+      node.timeoutAt = now + timeoutNanos;
+    } else if (hasDeadline) {
+      node.timeoutAt = node.deadlineNanoTime();
+    } else {
+      throw new AssertionError();
+    }
+    //3. 将节点加入队列，按照超时的时间先后顺序入队
+    // Insert the node in sorted order.
+    long remainingNanos = node.remainingNanos(now);
+    for (AsyncTimeout prev = head; true; prev = prev.next) {
+      if (prev.next == null || remainingNanos < prev.next.remainingNanos(now)) {
+        node.next = prev.next;
+        prev.next = node;
+        //4. 如果加入的节点位于队列的第一个，即head之后的节点，则需要唤醒等待的线程（在介绍watchdog部分统一介绍）
+        if (prev == head) {
+          AsyncTimeout.class.notify(); // Wake up the watchdog when inserting at the front.
+        }
+        break;
+      }
+    }
+  }
+```
+该方法逻辑很清晰，已经用注释表明，这里先不需要明白唤醒的逻辑，我们只需要明白该方法是将一个检测可能会超时逻辑操作的AsyncTimeout对象加入队列中。
+下面继续来看exit()方法，该方法有三种重载形式，这里我们只关心boolean参数和无参数的重载形式，其中前者最终也是调用无参形式，根据返回的结果是否超时，以及参数中是否需要抛异常决定是否抛异常，其代码如下：
+```
+  final void exit(boolean throwOnTimeout) throws IOException {
+    boolean timedOut = exit();
+    if (timedOut && throwOnTimeout) throw newTimeoutException(null);
+  }
+```
+所以重点是去看exit()方法是如何判断操作超时的，其代码为：
+```
+public final boolean exit() {
+    if (!inQueue) return false;
+    inQueue = false;
+    return cancelScheduledTimeout(this);
+  }
+```
+设置inQueue属性后，调用cancelScheduledTimeout()，在该方法中判断是否超时，并将节点移除队列：
+```
+  private static synchronized boolean cancelScheduledTimeout(AsyncTimeout node) {
+    // Remove the node from the linked list.
+    for (AsyncTimeout prev = head; prev != null; prev = prev.next) {
+      if (prev.next == node) {
+        prev.next = node.next;
+        node.next = null;
+        return false;
+      }
+    }
+
+    // The node wasn't found in the linked list: it must have timed out!
+    return true;
+  }
+```
+移除节点的逻辑很清晰，只不过这里需要注意判断超时的条件是看该AsyncTimeout节点是否在队列中，如果在其中则没有超时，如果不在其中则已经超时。从这里我们可以猜测watchdog的作用了，它的作用是在一个新的线程中检测这个队列的所有节点，当然只需要检测第一个，即最早结束的即可，如果超时则将该节点移除，所以exit()时就可以判断一个I/O操作是否超时了。
+在明白WatchDog的作用以后，我们可以比较容易地去阅读它的代码了
+```
+  private static final class Watchdog extends Thread {
+    public Watchdog() {
+      super("Okio Watchdog");
+      //讲线程设置为后台线程，其特点就是开启它的线程结束以后它会自动结束
+      setDaemon(true);
+    }
+
+    public void run() {
+      while (true) {
+        try {
+          AsyncTimeout timedOut;
+          synchronized (AsyncTimeout.class) {
+            //1. 等待
+            timedOut = awaitTimeout();
+            //2. 等待结束以后，有节点超时
+            // Didn't find a node to interrupt. Try again.
+            if (timedOut == null) continue;
+
+            //a. 控队列的特殊情况
+            // The queue is completely empty. Let this thread exit and let another watchdog thread
+            // get created on the next call to scheduleTimeout().
+            if (timedOut == head) {
+              head = null;
+              return;
+            }
+          }
+
+          //b. 某个节点已经超时，这里timeOut()方法在AsyncTimeout中是空方法，可以通过覆写该方法定义超时以后需要处理的逻辑
+          // Close the timed out node.
+          timedOut.timedOut();
+        } catch (InterruptedException ignored) {
+        }
+      }
+    }
+  }
+```
+这里我们看到它是在一个后台线程中检测这个超时队列，循环检测，第一步就是执行等待方法，为了便于分析，我们需要首先看这个awaitTimeout()方法：
+```
+ static AsyncTimeout awaitTimeout() throws InterruptedException {
+    // Get the next eligible node.
+    AsyncTimeout node = head.next;
+
+    //在前面看到开启检测线程以前一定时初始化head对象的，但是head之后，即队列的第一个节点可能为空，此时就是空队列情形
+    // The queue is empty. Wait until either something is enqueued or the idle timeout elapses.
+    if (node == null) {
+      //在控队列的情况下，等待一个空闲时间，此间没有入队的对象将线程唤醒，空闲时间过后如果依然时空队列，则返回head，则对应上面的a. 特殊情况
+      //执行return，结束循环并结束检测线程
+      //如果等待空闲时间内，有节点入队，此时检测线程被唤醒，这里返回null， 则上面的while循环会执行下一次循环，去检测第一个节点
+      long startNanos = System.nanoTime();
+      AsyncTimeout.class.wait(IDLE_TIMEOUT_MILLIS);
+      return head.next == null && (System.nanoTime() - startNanos) >= IDLE_TIMEOUT_NANOS
+          ? head  // The idle timeout elapsed.
+          : null; // The situation has changed.
+    }
+    //1. 计算第一个节点的超时剩余时间
+    long waitNanos = node.remainingNanos(System.nanoTime());
+
+    // The head of the queue hasn't timed out yet. Await that.
+    if (waitNanos > 0) {
+      // Waiting is made complicated by the fact that we work in nanoseconds,
+      // but the API wants (millis, nanos) in two arguments.
+      long waitMillis = waitNanos / 1000000L;
+      waitNanos -= (waitMillis * 1000000L);
+      //2. 等待一个超时时间
+      AsyncTimeout.class.wait(waitMillis, (int) waitNanos);
+      //3. 执行到这里有两种可能，一是等待超时，二是对入队的节点，并且该入队的节点在队列的第一个时，也就是比当前节点还要早结束
+      return null;
+    }
+
+    //如果队列的第一个节点已经超时了，则返回该节点，此时会走到上面的b情形，去执行该节点的timeout()方法
+    // The head of the queue has timed out. Remove it.
+    head.next = node.next;
+    node.next = null;
+    return node;
+  }
+```
+关于WatchDog的逻辑已经在代码中标识，我们需要明确的一点时，检测线程也就是看门狗线程始终检测第一个节点（如果不为空的话）。这里我们首先看空队列的特殊情况，此时会等待一段时间，期间如果有入队的，那么一定加在第一的位置，那么一定会调用notify()方法，前面的enter()方法中提到过，就会唤醒检测线程，此时条件不成立，则返回null，回到线程的run()方法，发现返回null时则会执行下一次循环，下次循环则会去检测刚加入队列的第一个节点的超时情况，如果等待一段时间没有入队的节点，超时以后wait()方法退出，此时条件满足，返回head，同样在run()方法中我们看到此时清空了head, 并结束了线程，也就是没有检测的任务了。
+下面继续分析非空的清空，此时获取到第一个节点，计算超时的时间，等待一段时间，这里依然有两种可能，一是有入队的节点，并且该节点的结束时间还要早，加在了当前节点的前面，那么此时会调用notify()方法，唤醒检测线程，wait()方法提前结束，此时返回null，回到run()方法依然是执行下一次循环，检测刚刚加入的新的节点的超时，如果新加入的节点结束时间晚于当前节点，它会加入到队列的后面，而不会调用notify()方法，这种情况与没有入队的情况相同，都是等到当前节点超时，wait()方法退出，依然是返回null，执行下一次循环，而下一次循环时取到了刚刚结束的节点，此时就会返回该节点，返回到run方法中则执行该节点的timeout()方法了。
+好了，啰嗦一大堆，所有的情况都覆盖到了，可能画图可以更好说明，只是作图技术欠佳，希望通过文字可以看懂。分析发现在执行I/O操作时，使用了AsyncTimeout，超时以后有可能会立即调用timeout方法（该节点位于第一个），也有可能不会立即调用（该节点位于靠后的位置），只有当前面的节点都移除以后才会轮到该节点。因为一个节点结束的时间点排序，因此后入队的节点其结束时间通常也会靠后，所以通常不存在一个节点始终存在于队列中的情况。
+
+
